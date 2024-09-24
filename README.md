@@ -1,4 +1,4 @@
-# Docker Image Optimization
+<img width="506" alt="{62BF0AE1-4324-4605-8139-7A4DC8A2FD77}" src="https://github.com/user-attachments/assets/ea93fdc2-8de7-47f7-ab12-0e2082797196"># Docker Image Optimization
 - Docker 이미지 최적화 방법
 
 
@@ -177,4 +177,59 @@ ___
 ## 3-1. 환경
 > Ubuntu 22.04.5 LTS</br></br>
 Docker 27.3.1</br></br>
-Image : 
+Image : Node14
+
+## 3-2. 구현
+### 최적화 전 (Non-Optimized)
+```bash
+# 최적화 전 Dockerfile
+FROM node:14
+
+WORKDIR /app
+
+# 모든 소스코드와 종속성 복사
+COPY . /app
+
+# 종속성 설치
+RUN npm install
+
+EXPOSE 3000
+
+# 애플리케이션 실행
+CMD ["npm", "start"]
+```
+
+### 최적화 후 (Optimized)
+```bash
+# 멀티 스테이지 빌드 적용
+FROM node:14-alpine as build
+
+# 빌드 단계: 종속성 설치 및 애플리케이션 빌드
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# 최종 이미지: 빌드된 결과물만 복사하여 실행
+FROM node:14-alpine
+
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package*.json ./
+RUN npm ci --production
+
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+### 최적화 전후 비교
+#### 1. 시간
+- 최적화 전
+<img width="248" alt="{8FA20ECD-8013-46BB-BC91-5AA6D7E7AAD7}" src="https://github.com/user-attachments/assets/4db521a1-21b7-4f8c-9a2e-c1b14ffa767a">
+
+- 최적화 후
+
+#### 2. 이미지 크기
+- 최적화 전
+<img width="506" alt="{62BF0AE1-4324-4605-8139-7A4DC8A2FD77}" src="https://github.com/user-attachments/assets/0f9710b4-fec7-4ec7-8eb5-a3ea3146741e">
+
