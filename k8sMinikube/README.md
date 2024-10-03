@@ -271,4 +271,5 @@ port를 80으로 사용하니 포트80을 포워딩 해주면 될 것이라 생�
 하지만 위와 같이 설정하면 무한 로딩이 발생하게 된다.
 
 Externer-IP:80으로 포워딩 설정을 해줘야한다.
+
 <img width="650" alt="{73AE08D6-BF97-4F01-93F5-2B39EF161427}" src="https://github.com/user-attachments/assets/c22d71f8-d8af-42da-bfc4-b3edf9f9c04d">
