@@ -158,7 +158,7 @@ kubectl get all
 ```
 
 
-<img width="650" alt="{98A4FFD9-F428-4B6E-90F1-843B74DD1C80}" src="https://github.com/user-attachments/assets/728c72ca-543c-4c25-8191-db40734df280">
+<img width="850" alt="{98A4FFD9-F428-4B6E-90F1-843B74DD1C80}" src="https://github.com/user-attachments/assets/728c72ca-543c-4c25-8191-db40734df280">
 
 
 
@@ -170,28 +170,28 @@ kubectl get all
 minikube tunnel
 ```
 
-<img width="650" alt="{CF97B9A6-2A61-4ADB-9895-919EC9CF12EF}" src="https://github.com/user-attachments/assets/5d596307-df8d-4354-b03c-4523dfcd5578">
+<img width="850" alt="{CF97B9A6-2A61-4ADB-9895-919EC9CF12EF}" src="https://github.com/user-attachments/assets/5d596307-df8d-4354-b03c-4523dfcd5578">
 
 ```BASH
 kubectl get service
 minikube service <서비스명>
 ```
-<img width="650" alt="{21CE9C11-5BA9-478E-899B-F75F63F01F2D}" src="https://github.com/user-attachments/assets/473830a8-5b4d-4208-badc-473ff142dd0f">
+<img width="850" alt="{21CE9C11-5BA9-478E-899B-F75F63F01F2D}" src="https://github.com/user-attachments/assets/473830a8-5b4d-4208-badc-473ff142dd0f">
 
 EXTERNAL-IP가 10.103.76.69이며, 외부에서는 Port:80으로 접속해야한다.
 
 외부에서 접속할 수 있도록 Port Forwarding을 설정해주자.
 
-<img width="650" alt="{812156D8-BB2C-48C1-86AB-D73C3FC043F2}" src="https://github.com/user-attachments/assets/ade84ebb-e315-4e42-9eee-85965872e86c">
+<img width="850" alt="{812156D8-BB2C-48C1-86AB-D73C3FC043F2}" src="https://github.com/user-attachments/assets/ade84ebb-e315-4e42-9eee-85965872e86c">
 </br>
 
 
 
 ### 🔹결과 (http의 port가 80이므로 따로 안적어도 된다)</br>
 
-<img width="650" alt="{52E36B8C-F241-4991-A3DC-86B0B78BA602}" src="https://github.com/user-attachments/assets/acdef303-5140-453e-82cc-4fe90b57a17d">
+<img width="850" alt="{52E36B8C-F241-4991-A3DC-86B0B78BA602}" src="https://github.com/user-attachments/assets/acdef303-5140-453e-82cc-4fe90b57a17d">
 
-<img width="650" alt="{BC43D3EB-4C90-46E7-A0BF-985F1A1DA68A}" src="https://github.com/user-attachments/assets/b7fea70b-b077-413f-afa6-473644f9b114">
+<img width="850" alt="{BC43D3EB-4C90-46E7-A0BF-985F1A1DA68A}" src="https://github.com/user-attachments/assets/b7fea70b-b077-413f-afa6-473644f9b114">
 
 성공적으로 접속하였으며 출력문 끝을 보면 값이 바뀐 것을 확인되므로 로드밸런싱이 된 것을 확인 가능하다.
 
@@ -225,13 +225,13 @@ with Diagram("SpringApp Kubernetes Architecture", show=False, direction="LR"):
         user >> lb_service >> replica_set >> pods
 ```
 ### 🔹4-2. Diagram
-<img src="https://github.com/user-attachments/assets/5aabce40-f6dd-41b8-a659-889f63617153" width="650" />
+<img src="https://github.com/user-attachments/assets/5aabce40-f6dd-41b8-a659-889f63617153" width="850" />
 
 
 ## 🟦 5. 트러블슈팅
 ### 🔹Pending 상태
 
-<img width="650" alt="{2348ECE9-CD43-4EF6-BB99-1066E315236B}" src="https://github.com/user-attachments/assets/c1e9e132-5419-4d6e-aacd-9cfea8bfd1ef">
+<img width="850" alt="{2348ECE9-CD43-4EF6-BB99-1066E315236B}" src="https://github.com/user-attachments/assets/c1e9e132-5419-4d6e-aacd-9cfea8bfd1ef">
 
 
 `kubectl get all` 명령어를 실행했을 때 위 사진과 같이 Pod 하나가 Pending 상태인 것을 확인할 수 있었다.
@@ -258,7 +258,7 @@ resources:
 
 이후, 기존에 실행중이었던 deployment를 삭제하고 수정한 yml파일로 deployment를 실행시켰다.
 
-<img width="650" alt="{98A4FFD9-F428-4B6E-90F1-843B74DD1C80}" src="https://github.com/user-attachments/assets/728c72ca-543c-4c25-8191-db40734df280">
+<img width="850" alt="{98A4FFD9-F428-4B6E-90F1-843B74DD1C80}" src="https://github.com/user-attachments/assets/728c72ca-543c-4c25-8191-db40734df280">
 
 성공!!
 
@@ -266,10 +266,10 @@ resources:
 ### 🔹Port Forwarding
 
 port를 80으로 사용하니 포트80을 포워딩 해주면 될 것이라 생각했었다.
-<img width="650" alt="{21B620E0-37E5-444C-AC9C-7F4B895D2D4E}" src="https://github.com/user-attachments/assets/ad774d07-4dee-4d7c-908d-bb97974a2c4b">
+<img width="850" alt="{21B620E0-37E5-444C-AC9C-7F4B895D2D4E}" src="https://github.com/user-attachments/assets/ad774d07-4dee-4d7c-908d-bb97974a2c4b">
 
 하지만 위와 같이 설정하면 무한 로딩이 발생하게 된다.
 
 Externer-IP:80으로 포워딩 설정을 해줘야한다.
 
-<img width="650" alt="{73AE08D6-BF97-4F01-93F5-2B39EF161427}" src="https://github.com/user-attachments/assets/c22d71f8-d8af-42da-bfc4-b3edf9f9c04d">
+<img width="850" alt="{73AE08D6-BF97-4F01-93F5-2B39EF161427}" src="https://github.com/user-attachments/assets/c22d71f8-d8af-42da-bfc4-b3edf9f9c04d">
