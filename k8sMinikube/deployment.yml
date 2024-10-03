@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ungbin
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ungbinkube
+  template:
+    metadata:
+      labels:
+        app: ungbinkube
+    spec:
+      containers:
+      - name: ungbin
+        image: ungbini/ungbinkube:1.0 #docker hub에 푸쉬한 image 사용
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 9988 #app의 server.port와 동일하게 설정

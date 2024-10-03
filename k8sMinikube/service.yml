@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-spring-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: ungbinkube
+  ports:
+  - port: 80 #외부와 통신할 port
+    targetPort: 9988 #depolyment의 containerPort와 동일하게 설정
