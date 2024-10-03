@@ -19,11 +19,42 @@ ubuntu: version 22.04.4 LTS
 docker: version 27.3.1
 minikube: version v1.34.0
 ```
+## 🟦 1. 아키텍처
+### 🔹1-1. Code
+Python으로 Diagram Package를 사용하여 생성
+
+```PYTHON
+from diagrams import Cluster, Diagram
+from diagrams.k8s.compute import Pod, Deployment, ReplicaSet
+from diagrams.k8s.network import Service
+from diagrams.onprem.client import Users
+from diagrams.aws.network import ELB
+
+with Diagram("SpringApp Kubernetes Architecture", show=False, direction="LR"):
+    user = Users("User")
+
+    with Cluster("Kubernetes Cluster"):
+        lb_service = Service("Service (LoadBalancer)")
+
+        with Cluster("Deployment"):
+            deploy = Deployment("Deployment")
+
+            with Cluster("ReplicaSet"):
+                replica_set = ReplicaSet("Replicaset")
+                pods = [Pod("Pod1"),
+                        Pod("Pod2"),
+                        Pod("Pod3")]
+
+        user >> lb_service >> replica_set >> pods
+```
+### 🔹1-2. Diagram
+<img src="https://github.com/user-attachments/assets/5aabce40-f6dd-41b8-a659-889f63617153" width="850" />
+
 
 ---
 # 💻 실습
-## 🟦 1. Docker Image 생성
-### 🔹1-1. Dockerfile 작성
+## 🟦 2. Docker Image 생성
+### 🔹2-1. Dockerfile 작성
 여러 Pod들로 로드밸런싱이 잘 되는지 눈으로 확인해보기 위해 다음과 같이 코드를 작성하였다.
 
 외부에서 접속하면 어떤 Pod로 접속되는지 Pod의 이름을 출력한다.
@@ -72,7 +103,7 @@ HEALTHCHECK --interval=10s --timeout=30s CMD curl -f http://localhost:9988/test 
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
 
-### 🔹1-2. Image 생성 및 Push
+### 🔹2-2. Image 생성 및 Push
 이미지 생성</br>
 `$ docker build -t ungbini/ungbinkube:1.0 .`
 
@@ -80,8 +111,8 @@ DockerHub Push</br>
 `$ docker push ungbini/ungbinkube:1.0`
 
 
-## 🟦 2. yml 파일 작성
-### 🔹2-1. deployment.yml 파일 작성
+## 🟦 3. yml 파일 작성
+### 🔹3-1. deployment.yml 파일 작성
 쿠버네티스는 컨테이너를 등록하고 관리하기 위해 **Pod**라는 오브젝트를 사용하는데 Pod는 다시 Pod의 단위를 그룹으로 만들어 관리한다.
 
 이때, Pod의 복제 단위인 **Replica**와 Replica의 배포단위인 **Deployment** 가 바로 그것들이다.
@@ -117,7 +148,7 @@ spec:
         - containerPort: 9988 #application.properties의 server.port와 동일하게 설정
 ```
 
-### 🔹2-2. service.yml 파일 작성
+### 🔹3-2. service.yml 파일 작성
 이제 `service.yaml` 을 작성하여 deployment 된 pod들 외부에서 접속할 수 있도록 **ip 와 port를 노출**시켜줘야 한다.
 
 `service.yml`
@@ -136,12 +167,12 @@ spec:
     targetPort: 9988 #depolyment의 containerPort와 동일하게 설정
 ```
 
-## 🟦 3. 배포 및 외부 접속
-### 🔹Flow
+## 🟦 4. 배포 및 외부 접속
+### 🔹4-1. Flow
 
 외부 클라이언트 요청: localhost:80/status → Minikube 서비스: port 80 → Pod의 9988 포트로 **포워딩** (targetPort: 9988) → Pod 컨테이너 응답 (containerPort: 9988).
 
-### 🔹배포
+### 🔹4-2. 배포
 - `deployment.yml` 실행</br>
 ```BASH
 kubectl apply -f deployment.yml
@@ -163,7 +194,7 @@ kubectl get all
 
 
 
-### 🔹외부 접속
+### 🔹4-3. 외부 접속
 외부 접속을 위해 터널링을 해줘야 한다. 다음 명령어를 입력하면된다.
 
 ```BASH
@@ -187,7 +218,7 @@ EXTERNAL-IP가 10.103.76.69이며, 외부에서는 Port:80으로 접속해야한
 
 
 
-### 🔹결과 (http의 port가 80이므로 따로 안적어도 된다)</br>
+### 🔹4-4. 결과 (http의 port가 80이므로 따로 안적어도 된다)</br>
 
 <img width="850" alt="{52E36B8C-F241-4991-A3DC-86B0B78BA602}" src="https://github.com/user-attachments/assets/acdef303-5140-453e-82cc-4fe90b57a17d">
 
@@ -196,40 +227,9 @@ EXTERNAL-IP가 10.103.76.69이며, 외부에서는 Port:80으로 접속해야한
 성공적으로 접속하였으며 출력문 끝을 보면 값이 바뀐 것을 확인되므로 로드밸런싱이 된 것을 확인 가능하다.
 
 
-## 🟦 4. 아키텍처
-### 🔹4-1. Code
-Python으로 Diagram Package를 사용하여 생성
-
-```PYTHON
-from diagrams import Cluster, Diagram
-from diagrams.k8s.compute import Pod, Deployment, ReplicaSet
-from diagrams.k8s.network import Service
-from diagrams.onprem.client import Users
-from diagrams.aws.network import ELB
-
-with Diagram("SpringApp Kubernetes Architecture", show=False, direction="LR"):
-    user = Users("User")
-
-    with Cluster("Kubernetes Cluster"):
-        lb_service = Service("Service (LoadBalancer)")
-
-        with Cluster("Deployment"):
-            deploy = Deployment("Deployment")
-
-            with Cluster("ReplicaSet"):
-                replica_set = ReplicaSet("Replicaset")
-                pods = [Pod("Pod1"),
-                        Pod("Pod2"),
-                        Pod("Pod3")]
-
-        user >> lb_service >> replica_set >> pods
-```
-### 🔹4-2. Diagram
-<img src="https://github.com/user-attachments/assets/5aabce40-f6dd-41b8-a659-889f63617153" width="850" />
-
 
 ## 🟦 5. 트러블슈팅
-### 🔹Pending 상태
+### 🔹5-1. Pending 상태
 
 <img width="850" alt="{2348ECE9-CD43-4EF6-BB99-1066E315236B}" src="https://github.com/user-attachments/assets/c1e9e132-5419-4d6e-aacd-9cfea8bfd1ef">
 
@@ -263,7 +263,7 @@ resources:
 성공!!
 
 
-### 🔹Port Forwarding
+### 🔹5-2. Port Forwarding
 
 port를 80으로 사용하니 포트80을 포워딩 해주면 될 것이라 생각했었다.
 <img width="850" alt="{21B620E0-37E5-444C-AC9C-7F4B895D2D4E}" src="https://github.com/user-attachments/assets/ad774d07-4dee-4d7c-908d-bb97974a2c4b">
