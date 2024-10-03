@@ -183,8 +183,10 @@ EXTERNAL-IP가 10.103.76.69이며, 외부에서는 Port:80으로 접속해야한
 외부에서 접속할 수 있도록 Port Forwarding을 설정해주자.
 
 <img width="650" alt="{812156D8-BB2C-48C1-86AB-D73C3FC043F2}" src="https://github.com/user-attachments/assets/ade84ebb-e315-4e42-9eee-85965872e86c">
-
 </br>
+
+
+
 ### 🔹결과 (http의 port가 80이므로 따로 안적어도 된다)</br>
 
 <img width="650" alt="{52E36B8C-F241-4991-A3DC-86B0B78BA602}" src="https://github.com/user-attachments/assets/acdef303-5140-453e-82cc-4fe90b57a17d">
