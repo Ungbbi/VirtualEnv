@@ -17,6 +17,7 @@ Ubuntu 가상환경에서 **Terraform**을 활용하여 AWS S3 Bucket을 생성�
 **6. 이미 존재하는 index.html을 수정하여 s3에 재 업로드</br>**
 
 **7. 동작 확인</br>**
+</br></br>
 
 ---
 # 🟦 실행 환경
@@ -24,6 +25,8 @@ Ubuntu 가상환경에서 **Terraform**을 활용하여 AWS S3 Bucket을 생성�
 - ubuntu : 22.04 LTS
   - AWS CLI : aws-cli/2.18.0 Python/3.12.6 Linux/5.15.0-122-generic exe/x86_64.ubuntu.22
 ```
+</br></br>
+
 
 ---
 # 🟦 0. AWS Configure
@@ -35,6 +38,7 @@ AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYxxxxxxxxxxxx
 Default region name [None]: 리전이름
 Default output format [None]: json
 ```
+</br></br>
 
 ---
 # 🟦 1. Terraform 설치
@@ -53,6 +57,7 @@ $ apt-get update && apt-get install terraform -y
 # 설치된 terraform의 버전 확인
 $ terraform -version
 ```
+</br></br>
 
 ---
 # 🟦 2. Terraform 스크립트
@@ -64,7 +69,7 @@ $ terraform -version
     - `resource_name` : `resource_type`의 이름을 선언해주는 것입니다.
 
     - **⚠️주의 : `resource_name`은 중복이 되어선 안됩니다.**
- 
+ </br></br>
 
 ### 🔹2-1. createBucket.tf
 ```Bash
@@ -82,6 +87,7 @@ resource "aws_s3_bucket_website_configuration" "xweb_bucket_website" {
   }
 }
 ```
+</br></br>
 
 ### 🔹2-2. policy.tf
 
@@ -121,9 +127,10 @@ resource "aws_s3_bucket_policy" "public_read_access" {
 EOF
 }
 ```
+</br></br>
 
 ### 🔹2-3. newIndex.tf
-- **`etag`**로 s3에 업로드 돼있는 index.html 파일의 **변경 사항을 감지**합니다.
+- `etag`로 s3에 업로드 돼있는 index.html 파일의 **변경 사항을 감지**합니다.
   
 ```Bash
 resource "aws_s3_object" "index" {
@@ -134,6 +141,7 @@ resource "aws_s3_object" "index" {
   etag          = filemd5("index.html")  # 파일이 변경될 때 MD5 체크섬을 사용해 변경 사항 감지
 }
 ```
+</br></br>
 
 ### 🔹2-4. newMain.tf
 
@@ -163,6 +171,7 @@ output "website_endpoint" {
   description = "The endpoint for the S3 bucket website."
 }
 ```
+</br></br>
 
 ---
 # 🟦 3. Terraform 실행 및 결과
@@ -189,12 +198,14 @@ terraform apply
 # terraform apply  실행 시 도중 yes를 입력해야 하는데 이를 Skip
 terraform apply -auto-approve
 ```
+</br></br>
 
 ### 🔹3-2. 실행 결과
 
 <img width="428" alt="{85788110-5009-49E0-9D5B-ECDAB3647CA0}" src="https://github.com/user-attachments/assets/be96ffc2-c1d4-49fc-aed1-2c867e205f2d">
 
 <img width="424" alt="{E23BFA5D-1B2E-4B6C-A94F-4527B992AEC9}" src="https://github.com/user-attachments/assets/8f0e9e4a-ffea-481f-bd4b-ae54e5d312b6">
+</br></br>
 
 ---
 # 🟦 4. Trouble Shooting
