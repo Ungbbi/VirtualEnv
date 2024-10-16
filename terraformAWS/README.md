@@ -1,22 +1,22 @@
-# Terraform을 활용한 S3 Bucket 생성 및 조작
+# 🤓 Terraform을 활용한 S3 Bucket 생성 및 조작
 ---
 Ubuntu 가상환경에서 Terraform을 활용하여 AWS S3 Bucket을 생성하고 생성한 객체를 조작해보는 실습을 진행하려 합니다.
 
 실습 내용은 다음과 같습니다.
 
-1. s3 bucket 생성</br>
+**1. s3 bucket 생성</br>**
 
-2. s3 정책 권한 승인</br>
+**2. s3 정책 권한 승인</br>**
 
-3. s3에 index.html 업로드</br>
+**3. s3에 index.html 업로드</br>**
 
-4. url 동작 확인</br>
+**4. url 동작 확인</br>**
 
-5. s3에 Main.html 업로드</br>
+**5. s3에 Main.html 업로드</br>**
 
-6. 이미 존재하는 index.html을 수정하여 s3에 재 업로드</br>
+**6. 이미 존재하는 index.html을 수정하여 s3에 재 업로드</br>**
 
-7. 동작 확인</br>
+**7. 동작 확인</br>**
 
 ---
 # 🟦 실행 환경
@@ -57,15 +57,146 @@ $ terraform -version
 ---
 # 🟦 2. Terraform 스크립트
 - Terraform 구성 스크립트 파일은 각각의 기능을 분리하여 작성하였습니다.
+
+- `resource "resource_type" "resource_name"`
+    - `resource_type` : Terraform 에서 사용하는 리소스 유형 중 하나를 지정해야 합니다.
+      
+    - `resource_name` : 사용할 리소스 이름을 정합니다.
+
+    - ⚠️주의 : `resource_name`은 중복이 되어선 안됩니다.
+ 
+
+### 🔹2-1. createBucket.tf
+```Bash
+# S3 버킷 생성
+resource "aws_s3_bucket" "bucket2" {
+  bucket = "ce08-bucket2"  # 생성하고자 하는 S3 버킷 이름
+}
+
+# S3 버킷의 웹사이트 호스팅 설정
+resource "aws_s3_bucket_website_configuration" "xweb_bucket_website" {
+  bucket = aws_s3_bucket.bucket2.id  # 생성된 S3 버킷 리소스 사용
+
+  index_document {
+    suffix = "index.html"
+  }
+}
+```
+
+### 🔹2-2. policy.tf
+
+- bucket 부분을 보면 `aws_s3_bucket` 리소스 유형의 bucket2 리소스를 사용하여 id 값을 가져오는 것입니다.
+
+
+```Bash
+# S3 버킷의 public read 정책 설정
+resource "aws_s3_bucket_public_access_block" "bucket2_public_access_block" {
+  bucket = aws_s3_bucket.bucket2.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+
+resource "aws_s3_bucket_policy" "public_read_access" {
+  bucket = aws_s3_bucket.bucket2.id  # 생성된 S3 버킷 이름 사용
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": [ "s3:GetObject" ],
+      "Resource": [
+        "arn:aws:s3:::ce08-bucket2",
+        "arn:aws:s3:::ce08-bucket2/*"
+      ]
+    }
+  ]
+}
+EOF
+}
+```
+
+### 🔹2-3. newIndex.tf
+- `etag`로 s3에 업로드 돼있는 index.html 파일의 변경 사항을 감지합니다.
   
-### 🔹2-1. 
-### 🔹2-2.
-### 🔹2-3.
-### 🔹2-4.
-### 🔹2-5.
+```Bash
+resource "aws_s3_object" "index" {
+  bucket        = aws_s3_bucket.bucket2.id  # 생성된 S3 버킷 이름 사용
+  key           = "index.html"
+  source        = "index.html"
+  content_type  = "text/html"
+  etag          = filemd5("index.html")  # 파일이 변경될 때 MD5 체크섬을 사용해 변경 사항 감지
+}
+```
+
+### 🔹2-4. newMain.tf
+
+```Bash
+provider "aws" {
+  region = "ap-northeast-2" # 사용할 AWS 리전 설정
+}
+
+# 이미 존재하는 S3 버킷에 파일 업로드
+resource "aws_s3_object" "Main" {
+  bucket = aws_s3_bucket.bucket2.id # 이미 존재하는 S3 버킷 이름
+  key    = "Main.html" # S3 버킷 내에서 파일의 경로
+  source = "Main.html" # 로컬 파일의 경로
+  content_type  = "text/html"
+
+  tags = {
+    Name        = "Main.html"
+    Environment = "Production"
+  }
+}
+```
+
+### 🔹2-5. output.tf
+```Bash
+output "website_endpoint" {
+  value = aws_s3_bucket.bucket2.website_endpoint
+  description = "The endpoint for the S3 bucket website."
+}
+```
 
 ---
-# 🟦 3. 수행 결과
+# 🟦 3. Terraform 실행행
+
+- Terraform은 리소스 간의 **의존성을 자동으로 감지**하여 구성 파일을 실행하는 순서를 결정합니다.
+  
+- Terraform은 현재 명령어를 수행하는 디렉터리에 있는 **모든 `.tf` 파일을 병합하여 하나의 구성**으로 처리합니다. 
+  따라서 특정 파일만 실행할 수는 없지만, 다른 파일을 무시하도록 구성을 변경할 수 있는 몇 가지 방법이 있습니다.
+  - `terraform apply -target= targetFile` 와 같이 -target 옵션을 사용
+ 
+
+```Ruby
+# Terraform 작업 디렉토리를 초기화
+terraform init
+
+# 현재 상태와 Terraform 구성 파일을 비교하여 어떤 변경이 필요한지 예측
+terraform plan
+
+# 실제 Terraform 구성에 따라 리소스를 생성, 변경 또는 삭제
+terraform apply
+
+# terraform apply  실행 시 도중 yes를 입력해야 하는데 이를 Skip
+terraform apply -auto-approve
+```
 
 ---
 # 🟦 4. Trouble Shooting
+### 🔹4-1. 구성파일 실행 순서
+
+.tf 파일들 간 실행을 할 때 bucket을 사용하였었습니다. 이 때 아래와 같이 각 tf 파일들에 bucket이름을 직접 값을 넣어주었더니 에러가 발생했습니다.
+
+```Bash
+resource "aws_s3_object" "Main" {
+  bucket = "test08-bucket" # s3에 실제로 존재하는 bucket 명
+  ```
+}
+```
