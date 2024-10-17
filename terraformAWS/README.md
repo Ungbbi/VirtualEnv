@@ -72,7 +72,7 @@ $ terraform -version
  </br></br>
 
 ### 🔹2-1. createBucket.tf
-```Bash
+```HCL
 # S3 버킷 생성
 resource "aws_s3_bucket" "bucket2" {
   bucket = "ce08-bucket2"  # 생성하고자 하는 S3 버킷 이름
@@ -94,7 +94,7 @@ resource "aws_s3_bucket_website_configuration" "xweb_bucket_website" {
 - bucket 부분을 보면 `aws_s3_bucket` 리소스 유형의 bucket2 리소스를 사용하여 id 값을 가져오는 것입니다.
 
 
-```Bash
+```HCL
 # S3 버킷의 public read 정책 설정
 resource "aws_s3_bucket_public_access_block" "bucket2_public_access_block" {
   bucket = aws_s3_bucket.bucket2.id
@@ -132,7 +132,7 @@ EOF
 ### 🔹2-3. newIndex.tf
 - `etag`로 s3에 업로드 돼있는 index.html 파일의 **변경 사항을 감지**합니다.
   
-```Bash
+```HCL
 resource "aws_s3_object" "index" {
   bucket        = aws_s3_bucket.bucket2.id  # 생성된 S3 버킷 이름 사용
   key           = "index.html"
@@ -145,7 +145,7 @@ resource "aws_s3_object" "index" {
 
 ### 🔹2-4. newMain.tf
 
-```Bash
+```HCL
 provider "aws" {
   region = "ap-northeast-2" # 사용할 AWS 리전 설정
 }
@@ -165,7 +165,7 @@ resource "aws_s3_object" "Main" {
 ```
 
 ### 🔹2-5. output.tf
-```Bash
+```HCL
 output "website_endpoint" {
   value = aws_s3_bucket.bucket2.website_endpoint
   description = "The endpoint for the S3 bucket website."
@@ -220,7 +220,7 @@ terraform apply -auto-approve
 
   하지만 아래와 같이 직접 값을 넣어준다면 의존성이 사라지니 실행 순서에 영향을 주는 일이 없어져, 없는 리소스를 참조하는 스크립트가 실행되므로 결국 에러가 발생하는 것입니다.
   
-```Bash
+```HCL
 resource "aws_s3_object" "Main" {
   bucket = "test08-bucket" # s3에 실제로 존재하는 bucket 명
   ```
